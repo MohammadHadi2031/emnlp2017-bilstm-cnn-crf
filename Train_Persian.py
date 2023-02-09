@@ -59,12 +59,31 @@ pickleFile = perpareDataset(embeddingsPath, datasets)
 embeddings, mappings, data = loadDatasetPickle(pickleFile)
 
 # Some network hyperparameters
-params = {'classifier': ['Softmax'], 'LSTM-Size': [100], 'dropout': (0.25, 0.25)}
+params = {
+    'dropout': (0.5,0.5),
+    'classifier': ['Softmax'],
+    'LSTM-Size': (100,), # check it
+    'customClassifier': {},
+    'hidden_layer_neurons': 100,
+    'optimizer': 'sgd',
+    'learning_rate': 0.0005,
+    'charEmbeddings': None,
+    'charEmbeddingsSize': 30, 
+    'charFilterSize': 30, 
+    'charFilterLength': 3, 
+    'charLSTMSize': 25, 
+    'maxCharLength': 25,
+    'useTaskIdentifier': False, 
+    'clipvalue': 0, 
+    'clipnorm': 1,
+    'earlyStopping': 5, 
+    'miniBatchSize': 10,
+    'featureNames': ['tokens']}
 
 model = BiLSTM(params)
 model.setMappings(mappings, embeddings)
 model.setDataset(datasets, data)
-model.storeResults('results/unidep_pos_results.csv') #Path to store performance scores for dev / test
+model.storeResults('results/persian_results.csv') #Path to store performance scores for dev / test
 model.modelSavePath = "models/[ModelName]_[DevScore]_[TestScore]_[Epoch].h5" #Path to store models
 model.fit(epochs=25)
 

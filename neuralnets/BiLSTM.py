@@ -40,6 +40,7 @@ class BiLSTM:
                          'charEmbeddings': None, 'charEmbeddingsSize': 30, 'charFilterSize': 30, 'charFilterLength': 3, 'charLSTMSize': 25, 'maxCharLength': 25,
                          'useTaskIdentifier': False, 'clipvalue': 0, 'clipnorm': 1,
                          'earlyStopping': 5, 'miniBatchSize': 32,
+                         'learing_rate': 0.1,
                          'featureNames': ['tokens', 'casing'], 'addFeatureDimensions': 10}
         if params != None:
             defaultParams.update(params)
@@ -58,7 +59,7 @@ class BiLSTM:
         # Create some helping variables
         self.mainModelName = None
         self.epoch = 0
-        self.learning_rate_updates = {'sgd': {1: 0.1, 3: 0.05, 5: 0.01}}
+        self.learning_rate_updates = {} #'sgd': {1: 0.1, 3: 0.05, 5: 0.01}}
         self.modelNames = list(self.datasets.keys())
         self.evaluateModelNames = []
         self.labelKeys = {}
@@ -186,10 +187,16 @@ class BiLSTM:
                     shared_layer = TimeDistributed(Dropout(self.params['dropout']), name='shared_dropout_'+str(self.params['dropout'])+"_"+str(cnt))(shared_layer)
             
             cnt += 1
-            
-            
+        
+        last_layer = shared_layer
+        ## add hidden layer 
+        if 'hidden_layer_neurons' in self.params:
+            neurons = self.params['hidden_layer_neurons']
+            hidden_layer = Dense(neurons, activation='relu')(last_layer)
+            last_layer = hidden_layer
+
         for modelName in self.modelNames:
-            output = shared_layer
+            output = last_layer
             
             modelClassifier = self.params['customClassifier'][modelName] if modelName in self.params['customClassifier'] else self.params['classifier']
 
@@ -243,7 +250,7 @@ class BiLSTM:
             elif self.params['optimizer'].lower() == 'adagrad':
                 opt = Adagrad(**optimizerParams)
             elif self.params['optimizer'].lower() == 'sgd':
-                opt = SGD(lr=0.1, **optimizerParams)
+                opt = SGD(lr=self.params['learning_rate'], **optimizerParams)
             
             
             model = Model(inputs=inputNodes, outputs=[output])
