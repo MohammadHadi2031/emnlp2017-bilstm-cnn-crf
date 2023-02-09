@@ -11,7 +11,7 @@ from keras import backend as K
 from keras import regularizers
 from keras import constraints
 from keras import initializers
-from keras.engine import Layer, InputSpec
+from keras.layers import Layer, InputSpec
 
 def path_energy(y, x, U, b_start=None, b_end=None, mask=None):
     '''Calculates the energy of a tag path y for a given input x (with mask),

@@ -42,7 +42,7 @@ datasets = {
 
 
 # :: Path on your computer to the word embeddings. Embeddings by Komninos et al. will be downloaded automatically ::
-embeddingsPath = 'komninos_english_embeddings.gz'
+embeddingsPath = 'Komninos_Wikipedia_WordEmbeddings_only_words'
 
 # :: Prepares the dataset to be used with the LSTM-network. Creates and stores cPickle files in the pkl/ folder ::
 pickleFile = perpareDataset(embeddingsPath, datasets)
@@ -59,7 +59,7 @@ pickleFile = perpareDataset(embeddingsPath, datasets)
 embeddings, mappings, data = loadDatasetPickle(pickleFile)
 
 # Some network hyperparameters
-params = {'classifier': ['CRF'], 'LSTM-Size': [100], 'dropout': (0.25, 0.25)}
+params = {'classifier': ['Softmax'], 'LSTM-Size': [100], 'dropout': (0.25, 0.25)}
 
 model = BiLSTM(params)
 model.setMappings(mappings, embeddings)
